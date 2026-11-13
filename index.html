@@ -465,5 +465,79 @@ if (video && unmuteBtn) {
 }
 </script>
 
+<script>
+/* EASTEL GA4 CONVERSION TRACKING */
+(function () {
+  const GA_ID = "G-X8BBPHE930";
+
+  function trackEastel(eventName, location, destination) {
+    if (typeof window.gtag !== "function") {
+      console.warn("GA4 belum tersedia:", eventName);
+      return;
+    }
+
+    window.gtag("event", eventName, {
+      event_category: "eastel_conversion",
+      button_location: location,
+      link_url: destination,
+      transport_type: "beacon"
+    });
+  }
+
+  // Track klik beli RM10 melalui ToyyibPay
+  document.addEventListener("click", function (event) {
+    const link = event.target.closest("a[href]");
+    if (!link) return;
+
+    const href = link.href;
+
+    if (href.includes("toyyibpay.com/SIM10")) {
+      trackEastel(
+        "click_beli_rm10",
+        link.textContent.trim() || "Butang Beli",
+        href
+      );
+    }
+  }, true);
+
+  // Track butang WhatsApp yang membuka modal
+  document.addEventListener("click", function (event) {
+    const button = event.target.closest("button[onclick]");
+    if (!button) return;
+
+    const action = button.getAttribute("onclick") || "";
+
+    if (action.includes("bukaPetakWhatsApp(")) {
+      trackEastel(
+        "click_whatsapp",
+        button.textContent.trim() || "WhatsApp Admin",
+        "whatsapp_modal"
+      );
+    }
+  }, true);
+
+  // Track WhatsApp direct link, elak kira dua kali
+  document.addEventListener("click", function (event) {
+    const link = event.target.closest("a[href]");
+    if (!link) return;
+
+    const href = link.href;
+
+    if (
+      href.includes("api.whatsapp.com/send") ||
+      href.includes("wa.me/")
+    ) {
+      trackEastel(
+        "click_whatsapp_open",
+        "Buka WhatsApp Sekarang",
+        href
+      );
+    }
+  }, true);
+
+  console.log("Eastel GA4 tracking installed:", GA_ID);
+})();
+</script>
+
 </body>
 </html>
